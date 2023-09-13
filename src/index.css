@@ -1,0 +1,43 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  background-color: lightgrey;
+}
+
+.app {
+  background-color: white;
+
+  height: 100vh;
+  width: 600px;
+}
+
+.container {
+  position: relative;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  height: 100%;
+}
+
+.back-button {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}

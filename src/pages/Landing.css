@@ -1,0 +1,13 @@
+.container {
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+}
+
+.menu-button {
+  margin: 5px;
+}
