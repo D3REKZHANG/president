@@ -2,12 +2,19 @@ import { Button, Input, Radio, RadioChangeEvent } from 'antd'
 import './Create.css'
 import { useState } from 'react';
 import { BackButton } from '../components/BackButton';
+import { useNavigate } from 'react-router-dom';
 
 const Create = () => {
 
   const [variation, setVariation] = useState('standard');
   const [players, setPlayers] = useState<Number>(3);
   const [nick, setNick] = useState<string>('');
+
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    navigate('/game');
+  }
 
   return (
     <div className="container">
@@ -52,6 +59,7 @@ const Create = () => {
         type="primary"
         htmlType="submit"
         disabled={nick === ''}
+        onClick={handleSubmit}
       >
         Create Game
       </Button>

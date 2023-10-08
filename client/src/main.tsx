@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
@@ -6,6 +5,7 @@ import { Landing } from './pages/Landing.tsx'
 import { ConfigProvider } from 'antd'
 import { Create } from './pages/Create.tsx'
 import { Join } from './pages/Join.tsx'
+import { Game } from './pages/Game.tsx'
 
 const router = createBrowserRouter([
   {
@@ -20,21 +20,23 @@ const router = createBrowserRouter([
     path: "/join",
     element: <Join />,
   },
+  {
+    path: "/game",
+    element: <Game />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ConfigProvider
-      theme={{
-        token: {
-          // Seed Token
-          colorPrimary: '#dea300',
-        },
-      }}
-    >
-      <div className="app">
-        <RouterProvider router={router} />
-      </div>
-    </ConfigProvider>
-  </React.StrictMode>,
+  <ConfigProvider
+    theme={{
+      token: {
+        // Seed Token
+        colorPrimary: '#dea300',
+      },
+    }}
+  >
+    <div className="app">
+      <RouterProvider router={router} />
+    </div>
+  </ConfigProvider>
 )

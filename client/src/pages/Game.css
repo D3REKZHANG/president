@@ -1,0 +1,53 @@
+.pile {
+  height: 100px;
+  /* border: 1px solid black; */
+  display: flex;
+  place-items: center;
+}
+
+.hand {
+  height: 100px;
+/*   border: 1px solid black; */
+  display: flex;
+  place-items: center;
+}
+
+.opponents {
+  height: 100px;
+  /* border: 1px solid black; */
+  display: flex;
+  place-items: center;
+}
+
+.player {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border: 2px solid black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 10px;
+}
+
+.card-count {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.pile {
+  border: 2px solid black;
+  border-radius: 20px;
+  padding: 10px; 
+  min-width: 200px;
+  display: flex;
+  justify-content: center;
+}
