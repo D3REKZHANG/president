@@ -1,13 +1,18 @@
 import { motion } from 'framer-motion';
 import small_cards from '../assets/small-cards.png';
+import 'react-toastify/dist/ReactToastify.css';
 
 import './Game.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'antd';
 
-import { Card, HandCard, Suite } from '../types';
+import { HandCard } from '../types';
+import { Card, GameState, Suite } from '@backend/types';
 import { HandElement } from '../components/HandElement';
 import { CardElement } from '../components/CardElement';
+import { socket } from '../socket';
+import { DisconnectOutlined } from '@ant-design/icons';
+import { ToastContainer } from 'react-toastify';
 
 
 const initialHand = [
@@ -22,9 +27,28 @@ const opponents = ['Daniel', 'Eric'];
 const Game = () => {
 
   const [hand, setHand] = useState<Array<HandCard>>(initialHand);
+  const [top, setTop] = useState<Array<Card>>([]);
+  const [isConnected, setIsConnected] = useState(socket.connected);
+
+  useEffect(() => {
+    socket.on('connect', ()=>{setIsConnected(true)});
+    socket.on('disconnect',()=>{setIsConnected(false)});
+    socket.on('state', (state: GameState)=>{
+      console.log("received \'state\'");
+      console.log(state);
+      setTop(state.top);
+      // setHand(state.players[0].hand);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const handlePlay = () => {
-    console.log(hand.filter(card => card.selected));
+    const played: Array<Card> = hand.filter(card => card.selected).map(card => card as Card);
+    socket.emit('play', 'XSKD', 0, played);
+    setHand(hand.filter(card => !card.selected));
   }
 
   return (
@@ -41,7 +65,7 @@ const Game = () => {
         )}
       </div>
       <div className="pile"> 
-        <CardElement card={{value: 5, suite: Suite.SPADES}} />
+        {top.map(card => <CardElement card={card} />)}
       </div>
       <HandElement hand={hand} setHand={setHand}/>
       <motion.div
@@ -50,6 +74,8 @@ const Game = () => {
       >
         <Button size='large' shape='round' onClick={handlePlay}> play </Button>
       </motion.div>
+      {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
+      <ToastContainer />
     </div>
   )
 }

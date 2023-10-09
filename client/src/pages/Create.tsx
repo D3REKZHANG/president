@@ -3,6 +3,8 @@ import './Create.css'
 import { useState } from 'react';
 import { BackButton } from '../components/BackButton';
 import { useNavigate } from 'react-router-dom';
+import { postLobby } from '../api';
+import { socket } from '../socket';
 
 const Create = () => {
 
@@ -13,6 +15,10 @@ const Create = () => {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
+    postLobby({roomName: 'asdf'});
+    socket.connect();
+    socket.emit('create-game', 'XSKD', nick);
+    socket.emit('start-game', 'XSKD');
     navigate('/game');
   }
 
@@ -43,7 +49,7 @@ const Create = () => {
           buttonStyle="solid"
         >
           {Array.from(Array(6), (_,i) => 
-            <Radio.Button value={i+3}>{i+3}</Radio.Button>
+            <Radio.Button key={i} value={i+3}>{i+3}</Radio.Button>
           )}
         </Radio.Group>
 

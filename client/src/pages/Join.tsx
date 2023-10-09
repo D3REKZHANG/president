@@ -2,11 +2,22 @@ import { Button, Input } from 'antd'
 import './Join.css'
 import { useState } from 'react';
 import { BackButton } from '../components/BackButton';
+import { socket } from '../socket';
+import { useNavigate } from 'react-router-dom';
 
 const Join = () => {
 
   const [code, setCode] = useState<string>('');
   const [nick, setNick] = useState<string>('');
+
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    socket.connect();
+    socket.emit('join-game', code, nick);
+
+    navigate('/game');
+  }
 
   return (
     <div className="container">
@@ -33,6 +44,7 @@ const Join = () => {
         className="submit"
         type="primary"
         htmlType="submit"
+        onClick={handleSubmit}
         disabled={nick === '' || code === ''}
       >
         Join Game

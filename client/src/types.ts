@@ -1,17 +1,5 @@
-enum Suite {
-  DIAMONDS,
-  CLUBS,
-  HEARTS,
-  SPADES,
-}
-
-export type Card = {
-  value: number,
-  suite: Suite,
-}
+import { Card } from '@backend/types'
 
 export interface HandCard extends Card {
   selected?: boolean;
 }
-
-export { Suite }
