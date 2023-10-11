@@ -1,19 +1,19 @@
-import { motion } from 'framer-motion';
-import small_cards from '../assets/small-cards.png';
-import 'react-toastify/dist/ReactToastify.css';
-
-import './Game.css'
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { ToastContainer } from 'react-toastify';
 import { Button } from 'antd';
+import { DisconnectOutlined } from '@ant-design/icons';
+import { useCookies } from 'react-cookie';
 
 import { HandCard } from '../types';
 import { Card, GameState, Suite } from '@backend/types';
+import { socket } from '../socket';
 import { HandElement } from '../components/HandElement';
 import { CardElement } from '../components/CardElement';
-import { socket } from '../socket';
-import { DisconnectOutlined } from '@ant-design/icons';
-import { ToastContainer } from 'react-toastify';
+import { PlayerCard } from '../components/PlayerCard';
 
+import 'react-toastify/dist/ReactToastify.css';
+import './Game.css'
 
 const initialHand = [
   {value: 3, suite: Suite.DIAMONDS},
@@ -30,6 +30,10 @@ const Game = () => {
   const [top, setTop] = useState<Array<Card>>([]);
   const [isConnected, setIsConnected] = useState(socket.connected);
 
+  const [cookies, _] = useCookies(['pres_id']);
+
+  const code = 'ABCD';
+
   useEffect(() => {
     socket.on('connect', ()=>{setIsConnected(true)});
     socket.on('disconnect',()=>{setIsConnected(false)});
@@ -37,7 +41,7 @@ const Game = () => {
       console.log("received \'state\'");
       console.log(state);
       setTop(state.top);
-      // setHand(state.players[0].hand);
+      setHand(state.players.filter(player => player.id == cookies.pres_id)[0].hand);
     });
 
     return () => {
@@ -47,22 +51,14 @@ const Game = () => {
 
   const handlePlay = () => {
     const played: Array<Card> = hand.filter(card => card.selected).map(card => card as Card);
-    socket.emit('play', 'XSKD', 0, played);
+    socket.emit('play', code, cookies.pres_id, played);
     setHand(hand.filter(card => !card.selected));
   }
 
   return (
     <div className="container">
       <div className="opponents">
-        {opponents.map((name, i) => 
-          <div key={i} className="player">
-            <div className="circle">{name}</div>
-            <div className="card-count">
-              3
-              <img width="25px" src={small_cards} />
-            </div>
-          </div>
-        )}
+        {opponents.map((name, i) => <PlayerCard key={i} name={name} cardCount={3} />)}
       </div>
       <div className="pile"> 
         {top.map(card => <CardElement card={card} />)}
@@ -75,6 +71,7 @@ const Game = () => {
         <Button size='large' shape='round' onClick={handlePlay}> play </Button>
       </motion.div>
       {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
+      {cookies.pres_id['pres_id']}
       <ToastContainer />
     </div>
   )

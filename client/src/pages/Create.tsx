@@ -3,8 +3,9 @@ import './Create.css'
 import { useState } from 'react';
 import { BackButton } from '../components/BackButton';
 import { useNavigate } from 'react-router-dom';
-import { postLobby } from '../api';
+import { postGame } from '../api';
 import { socket } from '../socket';
+import { useCookies } from 'react-cookie';
 
 const Create = () => {
 
@@ -13,12 +14,13 @@ const Create = () => {
   const [nick, setNick] = useState<string>('');
 
   const navigate = useNavigate();
+  const [cookies,_] = useCookies(['pres_id']);
 
-  const handleSubmit = () => {
-    postLobby({roomName: 'asdf'});
+  const handleSubmit = async () => {
+    const code = await postGame();
     socket.connect();
-    socket.emit('create-game', 'XSKD', nick);
-    socket.emit('start-game', 'XSKD');
+    socket.emit('join-game', code, cookies.pres_id, nick);
+    socket.emit('start-game', code);
     navigate('/game');
   }
 

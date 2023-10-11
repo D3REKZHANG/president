@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { getIdRo, postGameRo } from '@backend/dto/ro'
 
 export type postLobbyDto = {
   roomName: string;
@@ -6,10 +7,14 @@ export type postLobbyDto = {
 
 const SERVER_URL = 'http://localhost:3000'
 
-const postLobby = async (payload: postLobbyDto) => {
-  const data = await axios.post(`${SERVER_URL}/lobby`, payload);
+export const getId = async () => {
+  const res: AxiosResponse<getIdRo> = await axios.get(`${SERVER_URL}/id`);
   
-  console.log(data);
+  return res.data.newId;
 }
 
-export { postLobby }
+export const postGame = async () => {
+  const res: AxiosResponse<postGameRo> = await axios.post(`${SERVER_URL}/game`);
+  
+  return res.data.code;
+}

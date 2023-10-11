@@ -43,7 +43,7 @@ const HandElement = ({ hand, setHand }: Props) => {
           >
             <div className="hand prevent-select">
               {hand.map((card, index) => (
-                <Draggable key={card.value.toString()} draggableId={card.value.toString()} index={index}>
+                <Draggable key={index} draggableId={card.value.toString()} index={index}>
                   {(provided) => (
                     <div
                       ref={provided.innerRef}

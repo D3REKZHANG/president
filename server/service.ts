@@ -1,7 +1,5 @@
-import express from 'express';
+import { v4 as uuid } from 'uuid'
 
-const home = (req, res) => {
-  res.status(200).json({a:"yert"});
+export const getNewId = () => {
+  return uuid();
 }
-
-export { home }

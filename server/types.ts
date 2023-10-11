@@ -17,7 +17,8 @@ enum PlayerRank {
 }
 
 export type PlayerState = {
-  name: string,
+  id: string;
+  name: string;
   hand: Array<Card>;
   rank: PlayerRank;
 }

@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { CookiesProvider } from 'react-cookie'
 import { Landing } from './pages/Landing.tsx'
 import { ConfigProvider } from 'antd'
 import { Create } from './pages/Create.tsx'
@@ -36,7 +37,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     }}
   >
     <div className="app">
-      <RouterProvider router={router} />
+      <CookiesProvider defaultSetOptions={{ path: '/' }}>
+        <RouterProvider router={router} />
+      </CookiesProvider>
     </div>
   </ConfigProvider>
 )
