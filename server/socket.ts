@@ -3,6 +3,14 @@ import { Server } from "socket.io";
 import { Card } from './types';
 import { games } from './app';
 
+const gameExists = (code: string): boolean => {
+  if(!games.has(code)) {
+    console.log("  Unknown game code");
+    return false;
+  }
+  return true;
+}
+
 export const socketServer = (server: http.Server) => {
   const io = new Server(server, {
     cors: {
@@ -11,38 +19,46 @@ export const socketServer = (server: http.Server) => {
   });
 
   io.on("connection", (socket) => {
+    socket.on("lobby", (code) => {
+      if(!gameExists(code)) return;
+
+      io.emit("lobby-players", games.get(code)!.getPlayerName());
+    })
+
     socket.on("join-game", (code, id, name) => {
       console.log("Received \'join-game\'");
-      if(!games.has(code)) {
-        console.log("  Unknown game code");
-        return;
-      }
+
+      if(!gameExists(code)) return;
+
       try {
         games.get(code)!.addPlayer(id, name);
         console.log(`  Added ${name} (Player ${id}) to game`);
-        io.emit('state', games.get(code)!.getState());
-      } catch(Error) {
+        io.emit("lobby-players", games.get(code)!.getPlayerName());
+      } catch(e) {
         console.log(`  Failed. Player ${id}) already in game`);
       }
     });
 
-    socket.on("start-game", (code) => {
+    socket.on("start-game", (host_id, code) => {
       console.log("Received \'start-game\'");
-      if(!games.has(code)) {
-        console.log("  Unknown game code");
+
+      if(!gameExists(code)) return;
+
+      if(games.get(code)!.getHostId() != host_id) {
+        console.log("  Wrong host id");
         return;
       }
       games.get(code)!.newRound();
       console.log(`  Started new round for Game ${code}`);
+      io.emit('game-start');
       io.emit('state', games.get(code)!.getState());
     });
 
     socket.on("play", (code: string, id: string, cards: Array<Card>) => {
       console.log("Received \'play\'");
-      if(!games.has(code)) {
-        console.log("  Unknown game code");
-        return;
-      }
+
+      if(!gameExists(code)) return;
+
       games.get(code)!.play(id, cards);
       console.log(`  Player ${games.get(code)!.getPlayerName(id)} played ${cards.length} card(s)`);
       io.emit('state', games.get(code)!.getState());

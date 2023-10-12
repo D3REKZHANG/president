@@ -1,13 +1,17 @@
 import express from 'express';
 import * as service from './service';
-import { games } from './app';
 import { Game } from './game';
+import { games } from './app';
 const router = express.Router(); 
 
 router.get('/id', (_, res) => {
   const newId = service.getNewId();
 
   res.status(200).json({newId});
+}); 
+
+router.get('/games', (_, res) => {
+  res.status(200).json({games: games.keys()});
 }); 
 
 router.post('/game', (_, res) => {

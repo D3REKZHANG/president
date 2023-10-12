@@ -1,5 +1,5 @@
 import { card_assets } from '../assets/cards/index';
-import { Card } from '../types';
+import { Card } from '@backend/types';
 
 type Props = {
   card: Card

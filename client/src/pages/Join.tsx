@@ -1,6 +1,6 @@
 import { Button, Input } from 'antd'
 import './Join.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BackButton } from '../components/BackButton';
 import { socket } from '../socket';
 import { useNavigate } from 'react-router-dom';
@@ -14,11 +14,16 @@ const Join = () => {
   const navigate = useNavigate();
   const [cookies,_] = useCookies(['pres_id']);
 
-  const handleSubmit = () => {
+  useEffect(() => {
     socket.connect();
+
+    return () => { socket.disconnect() };
+  });
+
+  const handleSubmit = () => {
     socket.emit('join-game', code, cookies.pres_id, nick);
 
-    navigate('/game');
+    navigate(`/lobby/${code}`);
   }
 
   return (

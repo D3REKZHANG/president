@@ -41,7 +41,10 @@ class Game {
     return this.players.length - 1;
   }
 
-  getPlayerName(id: string): string {
+  getPlayerName(id?: string): string | Array<string> {
+    if(id == undefined) {
+      return this.players.map(player => player.name);
+    }
     if(!this.id_ind.has(id))
       return "null"
 
@@ -49,6 +52,10 @@ class Game {
     if(ind! < 0 || ind! > this.players.length) return "null"
 
     return this.players[ind!].name;
+  }
+
+  getHostId(): string {
+    return this.players[0].id;
   }
 
   newRound() {
