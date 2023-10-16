@@ -1,18 +1,18 @@
 import { useCookies } from "react-cookie";
 import { socket } from "../socket";
 import { useEffect, useState } from "react";
-import { Button } from "antd";
+import { Button, Tag } from "antd";
 import { ToastContainer } from "react-toastify";
-import { PlayerCard } from "../components/PlayerCard";
 import { DisconnectOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 
 import './Lobby.css'
+import { NameCard } from "../components/NameCard";
 
 export const Lobby = () => {
 
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState(["Emily", "Derek", "Eric"]);
   
   const [cookies, _] = useCookies(['pres_id']);
 
@@ -47,12 +47,17 @@ export const Lobby = () => {
   return (
     <div className="container">
       <h1>Lobby</h1>
-      <h1>{code}</h1>
+      <div className="tags">
+        <Tag color="orange">{code}</Tag>
+        <Tag> Standard </Tag>
+        <Tag> 3 Players </Tag>
+      </div>
       <div className="players">
-        {players.map((name, i) => <PlayerCard key={i} name={name} cardCount={0} />)}
+        Players
+        {players.map((name, i) => <NameCard key={i} name={name} wins={0} />)}
       </div>
       <Button
-        className="submit"
+        className="start-game"
         type="primary"
         htmlType="submit"
         onClick={handleStart}

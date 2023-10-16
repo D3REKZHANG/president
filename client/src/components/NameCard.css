@@ -1,0 +1,15 @@
+.namecard {
+  /* background: lightgray;*/
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+  border: 2px solid lightgray;
+}
+
+.name {
+  font-weight: bold;
+}

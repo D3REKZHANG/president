@@ -22,7 +22,11 @@ const initialHand = [
   {value: 2, suite: Suite.SPADES},
 ];
 
-const opponents = ['Daniel', 'Eric'];
+
+type PlayerInfo = {
+  name: string;
+  cardCount: number;
+}
 
 const Game = () => {
 
@@ -31,6 +35,7 @@ const Game = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   const [cookies, _] = useCookies(['pres_id']);
+  const [players, setPlayers] = useState<Array<PlayerInfo>>([]);
 
   const code = 'ABCD';
 
@@ -42,6 +47,7 @@ const Game = () => {
       console.log(state);
       setTop(state.top);
       setHand(state.players.filter(player => player.id == cookies.pres_id)[0].hand);
+      setPlayers(state.players.map(p => ({name: p.name, cardCount: p.hand.length})));
     });
 
     return () => {
@@ -58,7 +64,7 @@ const Game = () => {
   return (
     <div className="container">
       <div className="opponents">
-        {opponents.map((name, i) => <PlayerCard key={i} name={name} cardCount={3} />)}
+        {players.map((player, i) => <PlayerCard key={i} name={player.name} cardCount={player.cardCount} />)}
       </div>
       <div className="pile"> 
         {top.map(card => <CardElement card={card} />)}
