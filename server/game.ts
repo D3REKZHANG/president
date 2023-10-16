@@ -70,15 +70,15 @@ class Game {
   }
 
   play(player_id: string, cards: Array<Card>) {
-    const set = new Set();
-    const player = this.id_ind.get(player_id)
-    if(!player) {
+    const set = new Set<string>();
+    const player: number | undefined = this.id_ind.get(player_id)
+    if(player === undefined) {
       console.log("Unknown player id");
       return;
     }
-    cards.forEach((card) => set.add(card));
+    cards.forEach((card) => set.add(card.value.toString() + " " + card.suite.toString()));
     this.players[player].hand = this.players[player].hand.filter(
-      (card: Card) => !set.has(card),
+      (card: Card) => !set.has(card.value.toString() + " " + card.suite.toString()),
     );
 
     this.pile.push(cards);

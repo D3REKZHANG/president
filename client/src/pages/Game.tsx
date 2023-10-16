@@ -40,15 +40,21 @@ const Game = () => {
   const code = 'ABCD';
 
   useEffect(() => {
+    socket.connect();
     socket.on('connect', ()=>{setIsConnected(true)});
     socket.on('disconnect',()=>{setIsConnected(false)});
     socket.on('state', (state: GameState)=>{
       console.log("received \'state\'");
       console.log(state);
       setTop(state.top);
-      setHand(state.players.filter(player => player.id == cookies.pres_id)[0].hand);
       setPlayers(state.players.map(p => ({name: p.name, cardCount: p.hand.length})));
+      if(hand.length == 0) {
+        // set hand if just reconnected
+        setHand(state.players.filter(player => player.id == cookies.pres_id)[0].hand);
+      }
     });
+
+    socket.emit('state', code);
 
     return () => {
       socket.disconnect();

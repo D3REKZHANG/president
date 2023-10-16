@@ -52,6 +52,14 @@ export const socketServer = (server: http.Server) => {
       console.log(`  Started new round for Game ${code}`);
       io.emit('game-start');
       io.emit('state', games.get(code)!.getState());
+      console.log(`  Emitted state`);
+    });
+
+    socket.on("state", (code) => {
+      console.log("Received \'state\'");
+      if(!gameExists(code)) return;
+      io.emit('state', games.get(code)!.getState());
+      console.log(`  Emitted state`);
     });
 
     socket.on("play", (code: string, id: string, cards: Array<Card>) => {
