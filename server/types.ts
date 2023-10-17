@@ -24,10 +24,22 @@ export type PlayerState = {
 }
 
 export type GameState = {
+  state: string;
   top: Array<Card>;
   pile: Array<Array<Card>>;
   players: Array<PlayerState>;
   turn: number;
 };
+
+export type LobbyPlayer = {
+  id: string;
+  name: string;
+  wins: number;
+}
+
+export type LobbyState = {
+  players: Array<LobbyPlayer>;
+  host_id: string;
+}
 
 export { Suite, PlayerRank }

@@ -4,12 +4,13 @@ import './PlayerCard.css'
 type Props = {
   name: string;
   cardCount: number;
+  active: boolean;
 }
 
-const PlayerCard = ({ name, cardCount }: Props) => {
+const PlayerCard = ({ name, cardCount, active }: Props) => {
   return (
     <div className="player">
-      <div className="circle">{name}</div>
+      <div className={`circle ${active ? "active" : ""}`}>{name}</div>
       <div className="card-count">
         {cardCount}
         <img width="25px" src={small_cards} />

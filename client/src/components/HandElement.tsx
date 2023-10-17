@@ -1,7 +1,8 @@
 import { Draggable, DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { Card, HandCard } from '../types';
+import { HandCard } from '../types';
 import { motion } from 'framer-motion';
 import { CardElement } from './CardElement';
+import { Card } from '@backend/types';
 
 type Props = {
   hand: Array<HandCard>;
@@ -43,19 +44,34 @@ const HandElement = ({ hand, setHand }: Props) => {
           >
             <div className="hand prevent-select">
               {hand.map((card, index) => (
-                <Draggable key={index} draggableId={card.value.toString()} index={index}>
+                <Draggable
+                  key={card.value.toString() + " " + card.suite.toString()}
+                  draggableId={card.value.toString() + " " + card.suite.toString()}
+                  index={index}
+                >
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      style={{border: 'none', margin: '5px', ...provided.draggableProps.style}}
+                      style={{
+                        border: 'none',
+                        margin: '-10px',
+                        zIndex: index,
+                        ...provided.draggableProps.style
+                      }}
                     >
                       <motion.div
                         animate={card.selected ? {y:-25} : {}}
                         transition={{duration:0.2}}
                         style={{height: '100px'}}
-                        onClick={()=> {setHand([...hand.slice(0,index), {...hand[index], selected:!card.selected} ,...hand.slice(index+1, hand.length)])}}
+                        onClick={()=> {
+                          setHand([
+                            ...hand.slice(0,index),
+                            {...hand[index], selected:!card.selected},
+                            ...hand.slice(index+1, hand.length)
+                          ])
+                        }}
                       >
                         <CardElement card={card} />
                       </motion.div>

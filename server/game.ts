@@ -1,8 +1,9 @@
-import { Card, GameState, PlayerRank } from "./types";
+import { Card, GameState, LobbyState, PlayerRank } from "./types";
 
 class Player {
   hand: Array<Card> = [];
   rank = PlayerRank.REGULAR;
+  wins: number = 0;
   constructor(
     public id: string,
     public name: string
@@ -10,7 +11,7 @@ class Player {
 }
 
 class Game {
-  private state: "START" | "GAME" | "TRADE" = "START";
+  private state: "LOBBY" | "GAME" | "TRADE" = "LOBBY";
   private players: Array<Player> = [];
   private turn: number = 0;
   private deck: Array<Card> = [];
@@ -67,6 +68,7 @@ class Game {
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].hand = this.deck.slice(handSize * i, handSize * (i + 1));
     }
+    this.state = "GAME";
   }
 
   play(player_id: string, cards: Array<Card>) {
@@ -90,8 +92,16 @@ class Game {
     return this.top;
   }
 
+  getLobby(): LobbyState {
+    return {
+      players: this.players.map(p => ({ id: p.id, name: p.name, wins: 0})),
+      host_id: this.players[0].id
+    }
+  }
+
   getState(): GameState {
     return {
+      state: this.state,
       top: this.top,
       pile: this.pile,
       players: this.players,

@@ -8,11 +8,13 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import './Lobby.css'
 import { NameCard } from "../components/NameCard";
+import { LobbyPlayer, LobbyState } from "@backend/types";
 
 export const Lobby = () => {
 
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [players, setPlayers] = useState(["Emily", "Derek", "Eric"]);
+  const [players, setPlayers] = useState<Array<LobbyPlayer>>([]);
+  const [lobbyHost, setLobbyHost] = useState<string>("");
   
   const [cookies, _] = useCookies(['pres_id']);
 
@@ -25,8 +27,9 @@ export const Lobby = () => {
     socket.on('connect', ()=>{setIsConnected(true)});
     socket.on('disconnect',()=>{setIsConnected(false)});
 
-    socket.on('lobby-players', (players) => {
-      setPlayers(players);
+    socket.on('lobby', (lobby: LobbyState) => {
+      setPlayers(lobby.players);
+      setLobbyHost(lobby.host_id);
     });
     socket.on('game-start', () => {
       navigate(`/game/${code}`);
@@ -54,13 +57,21 @@ export const Lobby = () => {
       </div>
       <div className="players">
         Players
-        {players.map((name, i) => <NameCard key={i} name={name} wins={0} />)}
+        {players.map((p, i) =>
+          <NameCard
+            key={i}
+            name={p.name}
+            wins={p.wins}
+            host={p.id === lobbyHost}
+          />
+        )}
       </div>
       <Button
         className="start-game"
         type="primary"
         htmlType="submit"
         onClick={handleStart}
+        disabled={lobbyHost !== cookies.pres_id}
       >
         Start Game
       </Button>

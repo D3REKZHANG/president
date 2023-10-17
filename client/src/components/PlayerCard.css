@@ -21,3 +21,7 @@
   align-items: center;
   gap: 3px;
 }
+
+.active {
+    box-shadow: 0 0 15px 2px #48abe0;
+}

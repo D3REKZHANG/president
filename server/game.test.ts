@@ -1,14 +1,13 @@
 import { expect, test } from 'vitest'
-import { Game, Player } from './game'
-import { Card, GameState } from './types';
-
+import { Game } from './game'
+import { Card, GameState, PlayerState } from './types';
 
 test('play method correctly removes cards from hand', () => {
   const game = new Game("AAAA");
   game.addPlayer('a', 'Derek');
   game.addPlayer('b', 'Dereck');
   game.newRound();
-  const player: Player = game.getState().players[0];
+  const player: PlayerState = game.getState().players[0];
   const length: number = player.hand.length;
   const cards: Array<Card> = player.hand.slice(0,2);
   expect(player.hand.includes(cards[0])).toBe(true);

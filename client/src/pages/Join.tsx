@@ -6,17 +6,22 @@ import { socket } from '../socket';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 
+import { getId } from '../api';
+
 const Join = () => {
 
   const [code, setCode] = useState<string>('');
   const [nick, setNick] = useState<string>('');
 
   const navigate = useNavigate();
-  const [cookies,_] = useCookies(['pres_id']);
+  const [cookies, setCookies] = useCookies(['pres_id']);
 
   useEffect(() => {
-    socket.connect();
+    if(!cookies.hasOwnProperty('pres_id')) {
+      getId().then(newId => setCookies('pres_id', newId));
+    }
 
+    socket.connect();
     return () => { socket.disconnect() };
   });
 

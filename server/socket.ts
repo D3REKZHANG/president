@@ -22,7 +22,7 @@ export const socketServer = (server: http.Server) => {
     socket.on("lobby", (code) => {
       if(!gameExists(code)) return;
 
-      io.emit("lobby-players", games.get(code)!.getPlayerName());
+      io.emit("lobby", games.get(code)!.getLobby());
     })
 
     socket.on("join-game", (code, id, name) => {

@@ -1,11 +1,13 @@
 import { Button, Input, Radio, RadioChangeEvent } from 'antd'
 import './Create.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BackButton } from '../components/BackButton';
 import { useNavigate } from 'react-router-dom';
 import { postGame } from '../api';
 import { socket } from '../socket';
 import { useCookies } from 'react-cookie';
+
+import { getId } from '../api';
 
 const Create = () => {
 
@@ -14,7 +16,13 @@ const Create = () => {
   const [nick, setNick] = useState<string>('');
 
   const navigate = useNavigate();
-  const [cookies,_] = useCookies(['pres_id']);
+  const [cookies, setCookies] = useCookies(['pres_id']);
+
+  useEffect(() => {
+    if(!cookies.hasOwnProperty('pres_id')) {
+      getId().then(newId => setCookies('pres_id', newId));
+    }
+  }, []);
 
   const handleSubmit = async () => {
     const code = await postGame();

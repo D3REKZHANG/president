@@ -6,7 +6,7 @@ import { DisconnectOutlined } from '@ant-design/icons';
 import { useCookies } from 'react-cookie';
 
 import { HandCard } from '../types';
-import { Card, GameState, Suite } from '@backend/types';
+import { Card, GameState } from '@backend/types';
 import { socket } from '../socket';
 import { HandElement } from '../components/HandElement';
 import { CardElement } from '../components/CardElement';
@@ -15,24 +15,18 @@ import { PlayerCard } from '../components/PlayerCard';
 import 'react-toastify/dist/ReactToastify.css';
 import './Game.css'
 
-const initialHand = [
-  {value: 3, suite: Suite.DIAMONDS},
-  {value: 5, suite: Suite.DIAMONDS},
-  {value: 11, suite: Suite.HEARTS, selected: true},
-  {value: 2, suite: Suite.SPADES},
-];
-
-
 type PlayerInfo = {
+  id: string;
   name: string;
   cardCount: number;
 }
 
 const Game = () => {
-
-  const [hand, setHand] = useState<Array<HandCard>>(initialHand);
-  const [top, setTop] = useState<Array<Card>>([]);
   const [isConnected, setIsConnected] = useState(socket.connected);
+
+  const [hand, setHand] = useState<Array<HandCard>>([]);
+  const [top, setTop] = useState<Array<Card>>([]);
+  const [turn, setTurn] = useState<number>(0);
 
   const [cookies, _] = useCookies(['pres_id']);
   const [players, setPlayers] = useState<Array<PlayerInfo>>([]);
@@ -47,9 +41,15 @@ const Game = () => {
       console.log("received \'state\'");
       console.log(state);
       setTop(state.top);
-      setPlayers(state.players.map(p => ({name: p.name, cardCount: p.hand.length})));
+      setPlayers(state.players.map(p => ({
+        id: p.id,
+        name: p.name,
+        cardCount: p.hand.length,
+      })));
+      setTurn(state.turn);
       if(hand.length == 0) {
-        // set hand if just reconnected
+        // set hand on first connect
+        console.log("asdf");
         setHand(state.players.filter(player => player.id == cookies.pres_id)[0].hand);
       }
     });
@@ -70,7 +70,14 @@ const Game = () => {
   return (
     <div className="container">
       <div className="opponents">
-        {players.map((player, i) => <PlayerCard key={i} name={player.name} cardCount={player.cardCount} />)}
+        {players.map((player, i) =>
+          <PlayerCard
+            key={i}
+            name={player.name}
+            cardCount={player.cardCount}
+            active={i == turn}
+          />
+        )}
       </div>
       <div className="pile"> 
         {top.map(card => <CardElement card={card} />)}
@@ -80,7 +87,14 @@ const Game = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
-        <Button size='large' shape='round' onClick={handlePlay}> play </Button>
+        <Button
+          size='large'
+          shape='round'
+          onClick={handlePlay}
+          disabled={players[turn]?.id !== cookies.pres_id}
+        >
+          play
+        </Button>
       </motion.div>
       {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
       {cookies.pres_id['pres_id']}
