@@ -5,3 +5,14 @@ export type getIdRo = {
 export type postGameRo = {
   code: string
 }
+
+export type getGamesRo = {
+  games: Array<string>
+}
+
+export type verifyRo = {
+  gameExists: boolean
+  playerBelongs: boolean
+}
+
+export type errorRo = string;

@@ -15,6 +15,11 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cors());
+app.use((_, res, next)=> {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 app.use(cookieParser());
 
 app.use('/', router);

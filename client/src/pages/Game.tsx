@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ToastContainer } from 'react-toastify';
 import { Button } from 'antd';
-import { DisconnectOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, ForwardOutlined, UndoOutlined } from '@ant-design/icons';
 import { useCookies } from 'react-cookie';
 
 import { HandCard } from '../types';
@@ -14,6 +14,8 @@ import { PlayerCard } from '../components/PlayerCard';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './Game.css'
+import { useParams } from 'react-router-dom';
+import { Verified } from '../components/Verified';
 
 type PlayerInfo = {
   id: string;
@@ -31,7 +33,7 @@ const Game = () => {
   const [cookies, _] = useCookies(['pres_id']);
   const [players, setPlayers] = useState<Array<PlayerInfo>>([]);
 
-  const code = 'ABCD';
+  const { code } = useParams();
 
   useEffect(() => {
     socket.connect();
@@ -47,14 +49,14 @@ const Game = () => {
         cardCount: p.hand.length,
       })));
       setTurn(state.turn);
-      if(hand.length == 0) {
-        // set hand on first connect
-        console.log("asdf");
-        setHand(state.players.filter(player => player.id == cookies.pres_id)[0].hand);
-      }
+    });
+
+    socket.on('hand', (hand: Array<HandCard>)=>{
+      setHand(hand);
     });
 
     socket.emit('state', code);
+    socket.emit('hand', code, cookies.pres_id);
 
     return () => {
       socket.disconnect();
@@ -67,39 +69,65 @@ const Game = () => {
     setHand(hand.filter(card => !card.selected));
   }
 
+  const handlePass = () => {
+    socket.emit('pass', code, cookies.pres_id);
+  }
+
+  const handleUndo = () => {
+    socket.emit('undo', code, cookies.pres_id);
+  }
+
   return (
-    <div className="container">
-      <div className="opponents">
-        {players.map((player, i) =>
-          <PlayerCard
-            key={i}
-            name={player.name}
-            cardCount={player.cardCount}
-            active={i == turn}
+    <Verified>
+      <div className="container">
+        <div className="opponents">
+          {players.map((player, i) =>
+            <PlayerCard
+              key={i}
+              name={player.name}
+              cardCount={player.cardCount}
+              active={i == turn}
+            />
+          )}
+        </div>
+        <div className="pile"> 
+          {top.map((card, i) => <CardElement key={i} card={card} />)}
+        </div>
+        <HandElement hand={hand} setHand={setHand}/>
+        <div className="control-panel">
+          <motion.div whileTap={{ scale: 0.9 }}>
+            <Button
+              size='large'
+              shape='round'
+              onClick={handlePlay}
+              disabled={
+                players[turn]?.id !== cookies.pres_id ||
+                !hand.reduce((acc, card) => card.selected || acc, false)
+              }
+            >
+              Play
+            </Button>
+          </motion.div>
+          <Button
+            type='text'
+            size='large'
+            icon={<ForwardOutlined />}
+            onClick={handlePass}
+            disabled={players[turn]?.id !== cookies.pres_id}
           />
-        )}
+          <Button
+            type='text'
+            size='large'
+            icon={<UndoOutlined />}
+            onClick={handleUndo}
+            disabled={players[turn]?.id !== cookies.pres_id}
+          />
+        </div>
+        {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
+        {cookies.pres_id['pres_id']}
+        <ToastContainer />
       </div>
-      <div className="pile"> 
-        {top.map(card => <CardElement card={card} />)}
-      </div>
-      <HandElement hand={hand} setHand={setHand}/>
-      <motion.div
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        <Button
-          size='large'
-          shape='round'
-          onClick={handlePlay}
-          disabled={players[turn]?.id !== cookies.pres_id}
-        >
-          play
-        </Button>
-      </motion.div>
-      {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
-      {cookies.pres_id['pres_id']}
-      <ToastContainer />
-    </div>
+    </Verified>
   )
 }
 

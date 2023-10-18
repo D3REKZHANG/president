@@ -12,15 +12,15 @@ class Player {
 
 class Game {
   private state: "LOBBY" | "GAME" | "TRADE" = "LOBBY";
-  private players: Array<Player> = [];
-  private turn: number = 0;
+  public players: Array<Player> = [];
+  public turn: number = 0;
   private deck: Array<Card> = [];
   private pile: Array<Array<Card>> = [];
-  private top: Array<Card> = [];
-  private id_ind = new Map<string,number>();
+  public top: Array<Card> = [];
+  public id_ind = new Map<string,number>();
   constructor(public code: string) {
     for (let s = 0; s < 4; s++) {
-      for (let v = 1; v < 13; v++) {
+      for (let v = 1; v <= 13; v++) {
         this.deck.push({ value: v, suite: s });
       }
     }
@@ -86,10 +86,6 @@ class Game {
     this.pile.push(cards);
     this.top = cards;
     this.turn = (this.turn+1)%this.players.length;
-  }
-
-  getTop(): Array<Card> {
-    return this.top;
   }
 
   getLobby(): LobbyState {

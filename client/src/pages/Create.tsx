@@ -28,7 +28,9 @@ const Create = () => {
     const code = await postGame();
     socket.connect();
     socket.emit('join-game', code, cookies.pres_id, nick);
-    navigate(`/lobby/${code}`);
+    socket.on('lobby-players', (_) => {
+      navigate(`/lobby/${code}`); // once join-game bounces back, we navigate
+    });
   }
 
   return (

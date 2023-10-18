@@ -5,7 +5,7 @@ import { games } from './app';
 
 const gameExists = (code: string): boolean => {
   if(!games.has(code)) {
-    console.log("  Unknown game code");
+    console.log(`  Unknown game code "${code}"`);
     return false;
   }
   return true;
@@ -71,6 +71,21 @@ export const socketServer = (server: http.Server) => {
       console.log(`  Player ${games.get(code)!.getPlayerName(id)} played ${cards.length} card(s)`);
       io.emit('state', games.get(code)!.getState());
       console.log("  Emitted game state");
+    });
+
+    socket.on("hand", (code: string, id: string) => {
+      console.log("Received \'hand\'");
+      if(!gameExists(code)) return;
+
+      const game = games.get(code);
+      
+      if(!game!.id_ind.has(id)) {
+        console.log(`  No player with id ${id}`);
+        return;
+      }
+
+      socket.emit('hand', game!.players[game!.id_ind.get(id)!].hand);
+      console.log(`  Emitted hand state to player ${id}`);
     });
   });
 }

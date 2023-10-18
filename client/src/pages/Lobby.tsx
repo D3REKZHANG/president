@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import './Lobby.css'
 import { NameCard } from "../components/NameCard";
 import { LobbyPlayer, LobbyState } from "@backend/types";
+import { Verified } from "../components/Verified";
 
 export const Lobby = () => {
 
@@ -48,35 +49,37 @@ export const Lobby = () => {
   }
 
   return (
-    <div className="container">
-      <h1>Lobby</h1>
-      <div className="tags">
-        <Tag color="orange">{code}</Tag>
-        <Tag> Standard </Tag>
-        <Tag> 3 Players </Tag>
+    <Verified>
+      <div className="container">
+        <h1>Lobby</h1>
+        <div className="tags">
+          <Tag color="orange">{code}</Tag>
+          <Tag> Standard </Tag>
+          <Tag> 3 Players </Tag>
+        </div>
+        <div className="players">
+          Players
+          {players.map((p, i) =>
+            <NameCard
+              key={i}
+              name={p.name}
+              wins={p.wins}
+              host={p.id === lobbyHost}
+            />
+          )}
+        </div>
+        <Button
+          className="start-game"
+          type="primary"
+          htmlType="submit"
+          onClick={handleStart}
+          disabled={lobbyHost !== cookies.pres_id}
+        >
+          Start Game
+        </Button>
+        {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
+        <ToastContainer />
       </div>
-      <div className="players">
-        Players
-        {players.map((p, i) =>
-          <NameCard
-            key={i}
-            name={p.name}
-            wins={p.wins}
-            host={p.id === lobbyHost}
-          />
-        )}
-      </div>
-      <Button
-        className="start-game"
-        type="primary"
-        htmlType="submit"
-        onClick={handleStart}
-        disabled={lobbyHost !== cookies.pres_id}
-      >
-        Start Game
-      </Button>
-      {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
-      <ToastContainer />
-    </div>
+    </Verified>
   )
 }
