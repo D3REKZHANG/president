@@ -16,6 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './Game.css'
 import { useParams } from 'react-router-dom';
 import { Verified } from '../components/Verified';
+import { sort } from '../helper';
 
 type PlayerInfo = {
   id: string;
