@@ -68,7 +68,7 @@ const HandElement = ({ hand, setHand }: Props) => {
                         {...provided.dragHandleProps}
                         style={{
                           border: 'none',
-                          marginLeft: '-22px',
+                          /* marginLeft: '-22px', */
                           zIndex: index,
                           ...provided.draggableProps.style
                         }}

@@ -2,12 +2,11 @@ import { useCookies } from "react-cookie";
 import { socket } from "../socket";
 import { useEffect, useState } from "react";
 import { Button, Tag } from "antd";
-import { ToastContainer } from "react-toastify";
-import { DisconnectOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 
 import './Lobby.css'
 import { NameCard } from "../components/NameCard";
+import { OfflineIndicator } from "../components/OfflineIndicator";
 import { LobbyPlayer, LobbyState } from "@backend/types";
 import { Verified } from "../components/Verified";
 
@@ -24,6 +23,8 @@ export const Lobby = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if(code === "D") return; // debug mode
+
     socket.connect();
     socket.on('connect', ()=>{setIsConnected(true)});
     socket.on('disconnect',()=>{setIsConnected(false)});
@@ -77,8 +78,7 @@ export const Lobby = () => {
         >
           Start Game
         </Button>
-        {!isConnected && <DisconnectOutlined style={{position: 'absolute', bottom: 10}} />}
-        <ToastContainer />
+        <OfflineIndicator isHidden={isConnected} />
       </div>
     </Verified>
   )

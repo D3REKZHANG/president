@@ -34,7 +34,7 @@ const Create = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container portrait">
 
       <BackButton />
 

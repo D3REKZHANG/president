@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import Axios, { AxiosError, AxiosResponse } from 'axios';
 import { getIdRo, postGameRo, verifyRo } from '@backend/dto/ro'
 
 export type postLobbyDto = {
@@ -9,26 +9,23 @@ export class ErrorResponse {
   constructor(public message: string) {}
 }
 
-const SERVER_URL = 'http://localhost:3000'
+export const axios = Axios.create({
+  baseURL: `${import.meta.env.VITE_SERVER_URL}:3000`,
+  timeout: 4000,
+});
 
 export const getId = async () => {
-  const res: AxiosResponse<getIdRo> = await axios.get(`${SERVER_URL}/id`);
+  const res: AxiosResponse<getIdRo> = await axios.get('/id');
   
   return res.data.newId;
 }
 
 export const postGame = async () => {
-  const res: AxiosResponse<postGameRo> = await axios.post(`${SERVER_URL}/game`);
+  const res: AxiosResponse<postGameRo> = await axios.post('/game');
   
   return res.data.code;
 }
 
-export const getVerify = async (code: string) : Promise<verifyRo | ErrorResponse> => {
-  try {
-  const res: AxiosResponse<verifyRo | string> = await axios.get(`${SERVER_URL}/games/verify`, { params: {code: code }, withCredentials: true});
-    return res.data as verifyRo;
-  } catch (err) {
-    return new ErrorResponse((err as AxiosError).message);
-  }
-
+export const getVerify = async (code: string) : Promise<verifyRo> => {
+  return axios.get(`${SERVER_URL}/games/verify`, { params: {code: code }, withCredentials: true});
 }

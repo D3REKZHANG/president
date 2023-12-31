@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 
+import "../index.css";
+
 import { getId } from '../api'
 
 const Landing = () => {
@@ -19,7 +21,7 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container portrait">
       <div>
         <img src={jokerLogo} width="100px" className="logo react" alt="Joker logo" />
       </div>
