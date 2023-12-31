@@ -14,7 +14,7 @@ const gameExists = (code: string): boolean => {
 export const socketServer = (server: http.Server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173"
+      origin: process.env.URL
     },
   });
 

@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import cookieParser from 'cookie-parser';
+import * as dotenv from "dotenv";
+dotenv.config({ path: '../.env' });
 
 import { router } from './views';
 import { socketServer } from './socket';
@@ -16,10 +18,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cors());
 app.use((_, res, next)=> {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.header("Access-Control-Allow-Origin", process.env.URL);
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+
+console.log(process.env.URL);
+
 app.use(cookieParser());
 
 app.use('/', router);
